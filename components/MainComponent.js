@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import Constants from 'expo-constants';
 import Home from './HomeComponent';
 import Menu from './MenuComponent';
+import About from './AboutComponent';
+import Contact from './ContactComponent';
 import DishDetail from './DishDetailComponent';
 import { Button, View, Platform } from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack'; 
@@ -51,11 +53,46 @@ function HomeNavigator() {
   );
 }
 
+function AboutNavigator() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="About" component={About} 
+        options={{
+          headerTintColor: '#fff',
+          headerStyle: { backgroundColor: '#512DA8' },
+          headerTitleStyle: {
+            color: "#fff"            
+          }
+        }}
+        />
+    </Stack.Navigator>
+  );
+}
+
+function ContactNavigator() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="Contact" component={Contact} 
+        options={{
+          headerTintColor: '#fff',
+          headerStyle: { backgroundColor: '#512DA8' },
+          headerTitleStyle: {
+            color: "#fff"            
+          }
+        }}
+        />
+    </Stack.Navigator>
+  );
+}
+
+
 function MainNavigator() {
   return(
     <Drawer.Navigator initialRouteName="Home">
       <Drawer.Screen name="Home" component={HomeNavigator} />
+      <Drawer.Screen name="About Us" component={AboutNavigator} />
       <Drawer.Screen name="Menu" component={MenuNavigator} />
+      <Drawer.Screen name="Contact Us" component={ContactNavigator} />
     </Drawer.Navigator>
   )
 }
