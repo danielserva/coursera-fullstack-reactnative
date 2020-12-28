@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Constants from 'expo-constants';
 import Home from './HomeComponent';
 import Menu from './MenuComponent';
 import DishDetail from './DishDetailComponent';
@@ -64,7 +65,7 @@ class Main extends Component {
   render() {
  
     return (
-      <View style={{flex:1, paddingTop: Platform.OS === 'ios' ? 0 : Expo.Constants.statusBarHeight }}>
+      <View style={{flex:1, paddingTop: Platform.OS === 'ios' ? 0 : Constants.statusBarHeight }}>
         <MainNavigator />
       </View>
     );
