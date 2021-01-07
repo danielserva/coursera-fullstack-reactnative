@@ -6,6 +6,7 @@ import About from './AboutComponent';
 import Contact from './ContactComponent';
 import DishDetail from './DishDetailComponent';
 import Reservation from './ReservationComponent';
+import Favorites from './FavoriteComponent'
 import { View, Platform } from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack'; 
 import { createDrawerNavigator, DrawerItemList } from '@react-navigation/drawer';
@@ -128,7 +129,27 @@ function ReservationNavigator(){
         color='white'
         onPress={() => navigation.toggleDrawer() }/>
       })} >
-        <Stack.Screen name="Contact" component={Reservation} 
+        <Stack.Screen name="Reservation" component={Reservation} 
+        options={{
+          headerTintColor: '#fff',
+          headerStyle: { backgroundColor: '#512DA8' },
+          headerTitleStyle: {
+            color: "#fff"            
+          }
+        }}
+        />
+    </Stack.Navigator>
+  )
+}
+
+function FavoritesNavigator(){
+  return (
+    <Stack.Navigator screenOptions={({navigation}) => ( {
+      headerLeft: () => <Icon name='menu' size={24}
+        color='white'
+        onPress={() => navigation.toggleDrawer() }/>
+      })} >
+        <Stack.Screen name="Favorites" component={Favorites} 
         options={{
           headerTintColor: '#fff',
           headerStyle: { backgroundColor: '#512DA8' },
@@ -214,6 +235,17 @@ function MainNavigator() {
           drawerIcon: ({ tintColor, focused }) => (
             <Icon
               name='cutlery'
+              type='font-awesome'            
+              size={24}
+              color={tintColor}
+              />
+          )}
+        }/>
+        <Drawer.Screen name="Favorites" component={FavoritesNavigator} 
+        options={{ 
+          drawerIcon: ({ tintColor, focused }) => (
+            <Icon
+              name='heart'
               type='font-awesome'            
               size={24}
               color={tintColor}
