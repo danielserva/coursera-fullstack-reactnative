@@ -7,6 +7,7 @@ import Contact from './ContactComponent';
 import DishDetail from './DishDetailComponent';
 import Reservation from './ReservationComponent';
 import Favorites from './FavoriteComponent'
+// import Example from './ExampleComponent';
 import { View, Platform } from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack'; 
 import { createDrawerNavigator, DrawerItemList } from '@react-navigation/drawer';
@@ -162,6 +163,26 @@ function FavoritesNavigator(){
   )
 }
 
+// function ExampleNavigator(){
+//   return (
+//     <Stack.Navigator screenOptions={({navigation}) => ( {
+//       headerLeft: () => <Icon name='menu' size={24}
+//         color='white'
+//         onPress={() => navigation.toggleDrawer() }/>
+//       })} >
+//         <Stack.Screen name="Example" component={Example} 
+//         options={{
+//           headerTintColor: '#fff',
+//           headerStyle: { backgroundColor: '#512DA8' },
+//           headerTitleStyle: {
+//             color: "#fff"            
+//           }
+//         }}
+//         />
+//     </Stack.Navigator>
+//   )
+// }
+
 const CustomDrawerContentComponent = (props) => (
   <ScrollView>
     <SafeAreaView style={styles.container} forceInset={{ top: 'always', horizontal: 'never' }}>
@@ -252,6 +273,17 @@ function MainNavigator() {
               />
           )}
         }/>
+        {/* <Drawer.Screen name="Example" component={ExampleNavigator} 
+        options={{ 
+          drawerIcon: ({ tintColor, focused }) => (
+            <Icon
+              name='sample'
+              type='font-awesome'            
+              size={24}
+              color={tintColor}
+              />
+          )}
+        }/> */}
     </Drawer.Navigator>
   )
 }
