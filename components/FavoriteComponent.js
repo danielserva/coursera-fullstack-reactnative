@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { FlatList, View, Text } from 'react-native';
+import { FlatList, View, Text, Alert } from 'react-native';
 import { Avatar, ListItem } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { Loading } from './LoadingComponent';
@@ -7,6 +7,8 @@ import { baseUrl } from '../shared/baseUrl';
 import { deleteFavorite } from '../redux/ActionCreators';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { RectButton } from 'react-native-gesture-handler';
+import { Button } from 'react-native';
+import * as Animatable from 'react-native-animatable';
 
 const mapStateToProps = state => {
     return {
@@ -27,23 +29,45 @@ class Favorites extends Component {
         title: 'My Favorites'
     };
 
-    renderLeftAction = (progress, itemId) => {
+    createTwoButtonAlert = () =>
+    Alert.alert(
+      'Delete favorite?',
+      'Are you sure you wish to delete the favorite dish ' + item.name + '?',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log(item.name + 'Not Deleted'),
+          style: 'cancel'
+        },
+        { text: 'OK', onPress: () => this.props.deleteFavorite(item.id) }
+      ]
+    );
+    
+    renderRightAction = (progress, item) => {
       const pressHandler = () => {
-        console.log('pressHandler itemId: ' + itemId)
-        this.props.deleteFavorite(itemId);
+        Alert.alert(
+          'Delete favorite?',
+          'Are you sure you wish to delete the favorite dish ' + item.name + '?',
+          [
+            {
+              text: 'Cancel',
+              onPress: () => console.log(item.name + 'Not Deleted'),
+              style: 'cancel'
+            },
+            { text: 'OK', onPress: () => this.props.deleteFavorite(item.id) }
+          ]
+        );
 
       }
       return (
         <RectButton onPress={pressHandler} >
-          <Text
-            size={30}
-            color="#fff"> renderLeftAction </Text>
+            <Button color='red' title={'Delete'} />
         </RectButton>
       );
     };
 
-    renderLeftActions = (progress,itemId) => {
-      return  this.renderLeftAction(progress, itemId)
+    renderRightActions = (progress,item) => {
+      return  this.renderRightAction(progress, item)
     };
 
     render() {
@@ -53,15 +77,17 @@ class Favorites extends Component {
         const renderMenuItem = ({item, index}) => {
             return (
             <Swipeable
-              renderLeftActions={(progress) => this.renderLeftActions(progress, item.id)}>
+              renderRightActions={(progress) => this.renderRightActions(progress, item)}>
               <RectButton>
-                <ListItem key={index} bottomDivider onPress={() => navigate('Dishdetail', { dishId: item.id })}>
-                    <Avatar source={ {uri: baseUrl + item.image } } />
-                    <ListItem.Content>
-                      <ListItem.Title>{item.name}</ListItem.Title>
-                      <ListItem.Subtitle>{item.description}</ListItem.Subtitle>
-                    </ListItem.Content>
-                </ListItem>
+                <Animatable.View animation="fadeInRightBig" duration={2000}>  
+                  <ListItem key={index} bottomDivider onPress={() => navigate('Dishdetail', { dishId: item.id })}>
+                      <Avatar source={ {uri: baseUrl + item.image } } />
+                      <ListItem.Content>
+                        <ListItem.Title>{item.name}</ListItem.Title>
+                        <ListItem.Subtitle>{item.description}</ListItem.Subtitle>
+                      </ListItem.Content>
+                  </ListItem>
+                </Animatable.View>
               </RectButton>
             </Swipeable>
             );

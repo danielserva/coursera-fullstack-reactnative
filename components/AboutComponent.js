@@ -4,6 +4,7 @@ import { Avatar, Card, ListItem } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
 import { Loading } from './LoadingComponent';
+import * as Animatable from 'react-native-animatable';
 
 const mapStateToProps = state => {
   return {
@@ -51,27 +52,31 @@ class About extends Component {
     } else if (this.props.leaders.errMess) {
       return(
         <ScrollView>
-          <History />
-          <Card style={{padding:0}}>
-          <Card.Title>Corporate Leadership</Card.Title>
-          <Text style={{margin: 10}}>{this.props.leaders.errMess}</Text>
-          </Card>
+          <Animatable.View animation="fadeInDown" duration={2000} delay={1000}>
+            <History />
+            <Card style={{padding:0}}>
+            <Card.Title>Corporate Leadership</Card.Title>
+            <Text style={{margin: 10}}>{this.props.leaders.errMess}</Text>
+            </Card>
+          </Animatable.View>
         </ScrollView>
       );
     } else {
 
       return (
         <ScrollView>
-          <History />
-          <Card style={{padding:0}}>
-            <Card.Title>Corporate Leadership</Card.Title>
-            <Card.Divider></Card.Divider>
-            <FlatList 
-              data={this.props.leaders.leaders}
-              renderItem={renderLeaderItem}
-              keyExtractor={item => item.id.toString()}
-            />
-          </Card>
+          <Animatable.View animation="fadeInDown" duration={2000} delay={1000}>
+            <History />
+            <Card style={{padding:0}}>
+              <Card.Title>Corporate Leadership</Card.Title>
+              <Card.Divider></Card.Divider>
+              <FlatList 
+                data={this.props.leaders.leaders}
+                renderItem={renderLeaderItem}
+                keyExtractor={item => item.id.toString()}
+              />
+            </Card>
+          </Animatable.View>
         </ScrollView>);
       }
   }
