@@ -4,6 +4,8 @@ import { Card } from 'react-native-elements';
 import { Picker } from '@react-native-picker/picker';
 import DatePicker from 'react-native-datepicker';
 import { Modal } from 'react-native';
+import * as Animatable from 'react-native-animatable';
+import { Alert } from 'react-native';
 
 class Reservation extends Component {
 
@@ -28,7 +30,8 @@ class Reservation extends Component {
 
     handleReservation() {
       console.log(JSON.stringify(this.state));
-      this.toggleModal();  
+    //   this.toggleModal();  
+      this.showAlert();
     }
 
     resetForm(){
@@ -38,10 +41,37 @@ class Reservation extends Component {
         date: ''
     });
     }
+
+    componentDidMount(){
+        console.log('component did mount');
+    }
+
+    showAlert() {
+        let alertText = ``;
+        alertText = alertText.concat('Number of Guests: ' + this.state.guests)
+        alertText = alertText.concat(`\nSmoking?: `);
+        alertText = alertText.concat(this.state.smoking ? 'True' : 'False');
+        alertText = alertText.concat( `\nDate and Time: `);
+        alertText = alertText.concat(this.state.date);
+        Alert.alert(
+          'Your Reservation OK?',
+          alertText,
+          [
+            {
+              text: 'Cancel',
+              onPress: () => this.resetForm(),
+              style: 'cancel'
+            },
+            { text: 'OK', 
+              onPress: () => this.resetForm() }
+          ]
+        );
+      }
     
     render() {
         return(
             <ScrollView>
+                <Animatable.View animation="zoomIn">
                 <View style={styles.formRow}>
                 <Text style={styles.formLabel}>Number of Guests</Text>
                 <Picker
@@ -99,6 +129,7 @@ class Reservation extends Component {
                     accessibilityLabel="Learn more about this purple button"
                     />
                 </View>
+                </Animatable.View>
                 <Modal
                   animationType={'slide'}
                   transparent={false}
