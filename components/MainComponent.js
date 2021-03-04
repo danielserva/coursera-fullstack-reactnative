@@ -311,11 +311,11 @@ class Main extends Component {
       ToastAndroid.LONG)
       });
 
-    NetInfo.addEventListener('connectionChange', this.handleConnectivityChange);
+    NetInfo.addEventListener(this.handleConnectivityChange);
   }
 
   componentWillUnmount(){
-    NetInfo.removeEventListener('connectionChange', this.handleConnectivityChange);
+    NetInfo.removeEventListener(this.handleConnectivityChange);
   }
 
   handleConnectivityChange = (connectionInfo) => {
