@@ -1,13 +1,15 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect } from 'react';
 import { Text, View, ScrollView, StyleSheet, Switch, Button } from 'react-native';
 import { Card } from 'react-native-elements';
 import { Picker } from '@react-native-picker/picker';
-import DatePicker from 'react-native-datepicker';
 import { Modal } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import { Alert } from 'react-native';
 import { Notifications } from 'expo';
 import * as Permissions from 'expo-permissions';
+import * as Calendar from 'expo-calendar';
+import DateTimePicker from '@react-native-community/datetimepicker';
+
 class Reservation extends Component {
 
     constructor(props) {
@@ -16,8 +18,9 @@ class Reservation extends Component {
         this.state = {
             guests: 1,
             smoking: false,
-            date: '',
-            showModal: false
+            date: new Date(1598051730000),
+            showModal: false,
+            showCalendar: false
         }
     }
 
@@ -31,8 +34,66 @@ class Reservation extends Component {
 
     handleReservation() {
       console.log(JSON.stringify(this.state));
-    //   this.toggleModal();  
-      this.showAlert();
+      // this.toggleModal();  
+      // this.showAlert();
+      this.addReservationToCalendar(this.state.date);
+    }
+
+    async obtainCalendarPermission() {
+      let permission = await Calendar.getCalendarPermissionsAsync();
+      if (permission.status !== 'granted') {
+          permission = await Calendar.requestCalendarPermissionsAsync();
+          if (permission.status !== 'granted') {
+              Alert.alert('Permission not granted to add event to calendar');
+          }
+      }
+      return permission;
+    }
+
+    async getDefaultCalendarSource() {
+      const calendars = await Calendar.getCalendarsAsync(Calendar.EntityTypes.EVENT);
+      const defaultCalendars = calendars.filter(each => each.source.name === 'Default');
+      return defaultCalendars[0].source;
+    }
+
+    async getCourseraCalendarId() {
+      const defaultCalendarSource =
+        Platform.OS === 'ios'
+          ? await getDefaultCalendarSource()
+          : { isLocalAccount: true, name: 'Coursera Calendar' };
+      const newCalendarID = await Calendar.createCalendarAsync({
+        title: 'Coursera Calendar',
+        color: 'blue',
+        entityType: Calendar.EntityTypes.EVENT,
+        sourceId: defaultCalendarSource.id,
+        source: defaultCalendarSource,
+        name: 'courseraCalendar',
+        ownerAccount: 'personal',
+        accessLevel: Calendar.CalendarAccessLevel.OWNER,
+      });
+      console.log(`Your new calendar ID is: ${newCalendarID}`);
+      return newCalendarID;
+    }
+
+    async addReservationToCalendar(reservationDate) {
+      await this.obtainCalendarPermission();
+      let reservationStartDate = new Date(Date.parse(reservationDate));
+      let twoHoursLater = Date.parse(reservationDate) + (2*60*60*1000);
+      let reservationEndDate = new Date(twoHoursLater);
+      
+      console.log(JSON.stringify(`reservationDate: ${reservationDate}`));
+      console.log(JSON.stringify(`reservationEndDate: ${reservationEndDate}`));
+      
+      const courseraCalendarId = await this.getCourseraCalendarId(); 
+      console.log(JSON.stringify(`courseraCalendarId: ${courseraCalendarId}`));
+      const newReservation = await Calendar.createEventAsync(courseraCalendarId, {
+        title: 'Con Fusion Table Reservation',
+        startDate: reservationStartDate,
+        endDate: reservationEndDate,
+        allDay: false,
+        location: '121, Clear Water Bay Road, Clear Water Bay, Kowloon, Hong Kong',
+        timeZone: 'Asia/Hong_Kong'
+      });
     }
 
     resetForm(){
@@ -98,6 +159,16 @@ class Reservation extends Component {
             }
         });
     }
+
+    showDatepicker = () => {
+      this.setState({showCalendar: true})
+    };
+
+    onDateChange = (event, selectedDate) => {
+      const currentDate = selectedDate || this.state.date;
+      this.setState({showCalendar: false});
+      this.setState({date: currentDate});
+    }
     
 
     render() {
@@ -129,29 +200,18 @@ class Reservation extends Component {
                 </View>
                 <View style={styles.formRow}>
                 <Text style={styles.formLabel}>Date and Time</Text>
-                <DatePicker
+                <Button onPress={this.showDatepicker} title="Calendar" />
+                {this.state.showCalendar && (<DateTimePicker
+                    testID="dateTimePicker"
+                    mode='datetime'
                     style={{flex: 2, marginRight: 20}}
-                    date={this.state.date}
-                    format=''
-                    mode="datetime"
-                    placeholder="select date and Time"
-                    minDate="2017-01-01"
-                    confirmBtnText="Confirm"
-                    cancelBtnText="Cancel"
-                    customStyles={{
-                    dateIcon: {
-                        position: 'absolute',
-                        left: 0,
-                        top: 4,
-                        marginLeft: 0
-                    },
-                    dateInput: {
-                        marginLeft: 36
-                    }
-                    // ... You can check the source to find the other keys. 
-                    }}
-                    onDateChange={(date) => {this.setState({date: date})}}
-                />
+                    value={this.state.date}
+                    is24Hour={true}
+                    format='DD-MM-YYYY hh:mm'
+                    display="default"
+                    onChange={this.onDateChange}
+                />)}
+                
                 </View>
                 <View style={styles.formRow}>
                 <Button
